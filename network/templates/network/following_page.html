@@ -1,0 +1,91 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<h4 class="follow-title">Posts by users you follow:</h4>
+    {% if message %}
+    <div class="message">
+        <p>{{message}}</p>
+    </div>
+    {% else %}
+            {% for post in page_obj %}
+            <!-- {% if post.user.id != request.user.id %}
+                <button type="button" class="btn btn-outline-primary">Follow</button>
+            {% endif %} -->
+ 
+            <div class="post-outer">
+                {% if post.user == user_profile.user %}
+                    <img src="{{ user_profile.profile_picture.url }}">
+                {% endif %}
+                <div class="post-inner" id="post-inner-{{post.id}}">
+                    {% for key, value in user_profile_dict.items %}
+                        {% if post.user.username == key %}
+                            <div class="post-pic" id="post-pic-{{post.id}}">
+                                <img src="{{ value }}">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="post-second-section">
+                        <div class="post-top" id="post-top-{{post.id}}">
+                            {% if post.user == request.user %}
+                                <input data-id="edit-{{post.id}}" class="edit-button" id="{{post.id}}" type="submit" value="Edit">
+                            <!-- <a href="/edit_post/{{post.id}}">Edit Post</a> -->
+                            {% endif %}
+                            <a class="name" href="{% url 'profile' post.user.id %}">{{post.user.first_name}} {{post.user.last_name}}</a>
+                            <p class="username">@{{post.user}}</p>                        </div>
+                        <div class="post-middle">
+                            <p id="content-{{post.id}}" name="content">{{post.content}}</p>
+                        </div>
+                        <div class="post-bottom">
+                            {% if not request.user.is_authenticated %}
+                                <i data-id="{{post.id}}" id="like-button" class="far fa-heart"></i>
+                            {% else %}
+                                <i data-id="{{post.id}}" id="like-button"></i>
+                            {% endif %}
+                            <p class="likes-count" id="likes-count-{{post.id}}">{{post.likes.count}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+    {% endif %}
+
+    {% if page_obj|length < 10 and page_obj.number == 1%}
+    {% else %}
+    <!-- PAGINATION -->
+    <nav aria-label="..." class="pagination">
+        <ul class="pagination pagination-lg">
+
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">&laquo; First</a>
+            </li>
+            <!-- <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+            </li> -->
+        {% endif %}
+
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.page_number }}" tabindex="-1">{{ page_obj.number }}</a>
+          </li>
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>   
+    {% endif %}
+
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'network/network.js' %}"></script>
+{% endblock %}

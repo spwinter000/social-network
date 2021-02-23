@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{% block title %}Social Network{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/all.css">
+    <link href="{% static 'network/styles.css' %}" rel="stylesheet">
+    {% block script %}
+    {% endblock %}
+</head>
+
+<body>
+    {% if user.is_authenticated %}
+    <div class="user-info">
+        <a class="nav-link" href="{% url 'profile' request.user.id %}"><p id="username">{{request.user.username}}</p></a>
+        <a class="nav-link" id="index" href="{% url 'logout' %}"><i class="fas fa-arrow-circle-right"></i><p>Log Out</p></a>
+    </div>
+    {% else %}
+    <div class="user-info">
+        <a class="nav-link" href="{% url 'login' %}">Log In</a>
+        <a class="nav-link" href="{% url 'register' %}">Register</a>
+    </div>
+    {% endif %}
+
+    <div id="sidenav">
+        <ul>
+            <li>
+                <a class="nav-link" id="index" href="{% url 'index' %}"><p>N E T W O R K</p></a>
+            </li>
+            <li>
+                <a class="nav-link" id="index" href="{% url 'index' %}"><i class="fas fa-home"></i><p>All Posts</p></a>
+            </li>
+            {% if user.is_authenticated %}
+            <li>
+                <a class="nav-link" id="following_page" href="{% url 'following_page' %}"><i class="fas fa-user-friends"></i><p>Following</p></a>
+            </li>
+            <!-- <li>
+                <a class="nav-link" id="username" href="{% url 'profile' request.user.id %}">{{request.user.username}}</a>
+            </li>
+            <li>
+                <a class="nav-link" id="index" href="{% url 'logout' %}"><i class="fas fa-arrow-circle-right"></i><p>Log Out</p></a>
+            </li> -->
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="body">
+        {% block body %}
+        {% endblock %}
+    </div>
+</body>
+
+</html>

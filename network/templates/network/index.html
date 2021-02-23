@@ -1,0 +1,101 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+
+    <!-- NEW POST -->
+    {% if request.user.is_authenticated %}
+    <div class="new-post-outer">
+        <div class="new-post-inner">
+            <form action="{% url 'new_post' %}" class="new-post" method="POST">
+                {% csrf_token %}
+                <textarea name="content" placeholder="What's happening?" required></textarea>
+                <input type="submit" value="Post">
+            </form>
+        </div>
+    </div>
+    {% else %}
+        <p class="sign-in-prompt"><a href="{% url 'login' %}">Sign in</a> to post.</p>
+    {% endif %}
+    <!-- ALL POSTS FEED -->
+    {% for post in page_obj %}
+        <!-- {% if post.user.id != request.user.id %}
+            <button type="button" class="btn btn-outline-primary">Follow</button>
+        {% endif %} -->
+        <!-- if edit button is clicked...populate text area with post text -->
+
+        
+        <div class="post-outer">
+            {% if post.user == request.user %}
+            <div class="edit">
+                <input data-id="edit-{{post.id}}" class="edit-button" id="{{post.id}}" type="submit" value="Edit">
+            </div>
+                <!-- <a href="/edit_post/{{post.id}}">Edit Post</a> -->
+            {% endif %}
+            <div class="post-inner" id="post-inner-{{post.id}}">
+                {% for key, value in user_profile_dict.items %}
+                    {% if post.user.username == key %}
+                    <div class="post-pic" id="post-pic-{{post.id}}">
+                        <img src="{{ value }}">
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                <div class="post-second-section">
+                    <div class="post-top" id="post-top-{{post.id}}">
+                        <a id="name-{{post.id}}" class="name" href="{% url 'profile' post.user.id %}">{{post.user.first_name}} {{post.user.last_name}}</a>
+                        <p class="username">@{{post.user}}</p>
+                        <p data-id="timestamp-{{post.id}}" id="timestamp">{{post.timestamp}}</p>
+                    </div>
+                    <div class="post-middle">
+                        <p id="content-{{post.id}}" name="content">{{post.content}}</p>
+                    </div>
+                    <div class="post-bottom">
+                        {% if not request.user.is_authenticated %}
+                            <i data-id="{{post.id}}" id="like-button" class="far fa-heart"></i>
+                        {% else %}
+                            <i data-id="{{post.id}}" id="like-button"></i>
+                        {% endif %}
+                        <p class="likes-count" id="likes-count-{{post.id}}">{{post.likes.count}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if page_obj|length < 10 and page_obj.number == 1 %}
+    {% else %}
+    <!-- PAGINATION -->
+    <nav aria-label="..." class="pagination">
+        <ul class="pagination pagination-lg">
+
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">&laquo; First</a>
+            </li>
+            <!-- <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+            </li> -->
+        {% endif %}
+
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.page_number }}" tabindex="-1">{{ page_obj.number }}</a>
+          </li>
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}      
+    
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'network/network.js' %}"></script>
+{% endblock %}

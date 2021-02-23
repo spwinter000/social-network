@@ -1,0 +1,41 @@
+<div class="profile">
+    <div class="info">
+        <div class="profile-picture">
+            <img src="{{ profile_picture.url }}">
+        </div>
+        <div class="firstname-lastname">
+            <h3>{{post.user.first_name}} {{post.user.last_name}}</h3>
+        </div>
+        <div class="handle">
+            <p>@{{user.username}}</p>
+        </div>
+        {% if following_back %}
+        <div class="following-back">
+            <span id="follows-back" class="badge badge-light">Follows you</span>
+        </div>
+        {% endif %}
+    </div>
+    <div class="followers">
+        <strong>{{followings_count}}</strong> Following
+        <strong>{{followers_count}}</strong> Followers
+    <!-- </div> -->
+    <!-- if profile is of a user that is not request.user and request.user follows profile, display follow button, else display 'following' -->
+    {% if user.id != request.user.id and request.user.is_authenticated and user_follows == True %} 
+        <div class="follow-button-div">    
+            <form action="{% url 'unfollow' user.id %}" method="post" class="follow-button">
+                {% csrf_token %}
+                <input id="follow" type="submit" class="btn btn-primary" value="Following">
+            </form>
+        </div>
+    {% elif user.id != request.user.id and request.user.is_authenticated and user_follows == False %}
+        <div class="follow-button-div">      
+            <form action="{% url 'follow' user.id %}" method="post" class="follow-button">
+                {% csrf_token %}
+                <input id="follow" type="submit" class="btn btn-outline-primary" value="Follow">
+            </form>
+        </div>
+    {% elif user.id == request.user.id%}
+        <!-- <p>You cant follow yourself!</p> -->
+    {% endif %}
+    </div>
+</div>
