@@ -4,6 +4,6 @@ This application mimics Twitter in it's appearance. Users can post text-based po
 
 view at https://calm-badlands-77725.herokuapp.com/
 
-![ScreenShot](https://github.com/spwinter000/social-network/tree/main/screenshots/screenshot.PNG)
+![ScreenShot](/screenshots/screenshot.PNG)
 
 
